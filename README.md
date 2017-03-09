@@ -1,3 +1,3 @@
-# ogGame
+# Game-Project
 
-This is the original code we used to make a better game!
+Developing a new web game. 
