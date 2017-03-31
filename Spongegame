@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>yep... still doesn't work</title>
+</head>
+
+
+<style>
+.box{
+	position: absolute;
+	top: 600px;
+	left: 600px;
+}
+body{
+	background-image: url("lol.png");
+}
+audio { 
+   display:none;
+}
+p{
+font-family: "comicsansms";
+    font-size: 40px;
+}
+button{
+	background-color:gold;
+	color:black;
+}
+</style>
+
+<body>
+<p id="demo"> </p>
+<embed src="nice.mp3" autostart="true" hidden="true">
+<section>
+
+<!-- This div is the canvas -->
+<div>
+<canvas id="canvas" width="1250" height="710">
+This text is displayed if your browser does not support HTML5 Canvas.
+</canvas>
+</div>
+
+
+<div class="box">
+<button type="button" id="mybutton" onclick="myFunction()">Click Here to Begin</button>
+</div>
+
+<script type="text/javascript">
+/*
+   index.html - draws a dot on the screen, credit to:s
+   http://html5.litten.com/moving-shapes-on-the-html5-canvas-with-the-keyboard/
+   programmer: MHoel, Nov 3, 2014
+*/
+// Set some global variables
+var canvas;
+var dx = 10;
+var dy = 10;
+var score = 0;
+var squidx = 30;
+var squidy = 30;
+var squidh = 41;
+var squidw = 36;
+var patx = 40;
+var paty = 40;
+var patw = 36;
+var path = 41;
+var spongeh = 39;
+var spongew = 39;
+var x = 150;
+var y = 100;
+var WIDTH = 1250;
+var HEIGHT = 710;
+var spongearray = new Array(10);
+spongearray = spongefill(spongearray);
+function rect(x,y,w,h) {
+	ctx.beginPath();
+	ctx.rect(x,y,w,h);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+function clear() {
+	ctx.clearRect(0, 0, WIDTH, HEIGHT);
+}
+// Important starting function
+function init() {
+	canvas = document.getElementById("canvas");
+	ctx = canvas.getContext("2d");
+	var audio = new Audio("SpongebobTrap.mp3");
+	audio.play();
+	document.getElementById("demo").innerHTML = "Your score is: 00";
+	return setInterval(draw, 120); // this is key , tells draw function to fire 100x per second
+}
+
+function getrandomInt(min, max){
+	min = Math.ceil(min);
+	max = Math.floor(max);
+	return Math.floor(Math.random() * (max-min)) + min;
+}
+
+function spongefill(spongearray){
+	var i;
+	for (i = 0; i<spongearray.length; i++){
+		spongearray[i] = [getrandomInt(10,WIDTH-10), getrandomInt(10,HEIGHT-10),10,10]
+	}
+	return spongearray;
+}
+
+function checkpatCollide(sbarray) {
+	var sbx = sbarray[0]; 
+	var sby = sbarray[1]; 
+	var sbw = spongew; 
+	var sbh = spongeh;
+
+   	return !(
+        ((sby + sbh) < (paty)) ||
+        (sby > (paty + path)) ||
+        ((sbx + sbw) < patx) ||
+        (sbx > (patx + patw))
+    );
+}
+
+function checksquidCollide(sbarray) {
+	var sbx = sbarray[0]; 
+	var sby = sbarray[1]; 
+	var sbw = spongew; 
+	var sbh = spongeh;
+
+   	return !(
+        ((sby + sbh) < (squidy)) ||
+        (sby > (squidy + squidh)) ||
+        ((sbx + sbw) < squidx) ||
+        (sbx > (squidx + squidw))
+    );
+}
+
+function doKeyDown(evt){
+	for(i=0;i<spongearray.length;i++){
+		if (checkpatCollide(spongearray[i])){
+			spongearray.splice(i,1)
+			score = score+1;
+			document.getElementById("demo").innerHTML = "Your score is: " + score;
+		}
+		if (checksquidCollide(spongearray[i])){
+			squidx = 10;
+			squidy = 10;
+			score = score-1;
+			document.getElementById("demo").innerHTML = "Your score is: " + score;
+		}
+	}
+	switch (evt.keyCode) {
+		case 38:  /* Up arrow was pressed */
+			if (squidy - dy > 0){
+				squidy -= dy;
+			}
+			break;
+		case 40:  /* Down arrow was pressed */
+			if (squidy + dy < HEIGHT){
+				squidy += dy;
+			}
+			break;
+		case 37:  /* Left arrow was pressed */
+			if (squidx - dx > 0){
+				squidx -= dx;
+			}
+			break;
+		case 39:  /* Right arrow was pressed */
+			if (squidx + dx < WIDTH){
+				squidx += dx;
+			}
+			break;
+		case 87:  /* Up arrow was pressed */
+			if (paty - dy > 0){
+				paty -= dy;
+				var patright = new Image;
+				patright.onload = function(){
+					ctx.drawImage(patright, patx, paty,patw,path);
+				};
+				patright.src = "patright.png";
+				}
+			break;
+		case 83:  /* Down arrow was pressed */
+			if (paty + dy < HEIGHT){
+				paty += dy;
+			}
+			break;
+		case 65:  /* Left arrow was pressed */
+			if (patx - dx > 0){
+				patx -= dx;
+			}
+			break;s
+		case 68:  /* Right arrow was pressed */
+			if (patx + dx < WIDTH){
+				patx += dx;
+			}
+			break;
+	}
+}
+
+function draw() {
+	clear();
+  //  ctx.fillStyle = "black"; 
+	//ctx.strokeStyle = "yellow";
+	rect(0,0,WIDTH,HEIGHT);
+	var back = new Image;
+	var img = new Image;
+	var img2 = new Image;
+	var img3 = new Image;
+	back.onload = function(){
+		ctx.drawImage(back, 0,0);
+	};
+	back.src = "background.png"
+	img.onload = function(){
+		for (i = 0; i<spongearray.length; i++){
+			ctx.drawImage(img,spongearray[i][0],spongearray[i][1], spongew,spongeh);
+		}
+	};
+		img.src = "spongebob.png";
+	img2.onload = function(){
+		ctx.drawImage(img2,patx,paty,patw,path);
+	};
+	img2.src = "patrick.png"
+	img3.onload = function(){
+		ctx.drawImage(img3,squidx,squidy,squidw,squidh);
+	};
+	img3.src = "squidward.png"
+}
+
+function myFunction() {
+init();
+window.addEventListener('keydown',doKeyDown,true);
+document.getElementById("mybutton").hidden = true;
+}
+</script>
+</section>
+</body>
+</html>
